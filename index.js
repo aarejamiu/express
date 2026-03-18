@@ -3,32 +3,67 @@ const app = express();
 const dotenv = require('dotenv');
 dotenv.config();
 
-
+app.use(express.static('images'))
 app.get('/products', (req, res) => {
     const products = [
         {
             name: "Laptop",
             price: 500000,
-            image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8"
+            image: "/Laptop.jpg"
         },
         {
             name: "Phone",
             price: 200000,
-            image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9"
+            image: "/Phone.jpg"
         },
         {
             name: "Headphones",
             price: 50000,
-            image: "https://images.unsplash.com/photo-1518443895914-0d7b1c6b6b64"
-        }
+            image: "/Hphone.jpg"
+        },
+        {
+            name: "Smart Watch",
+            price: 80000,
+            image: "/smartwatch.jpg"
+        },
+        {
+            name: "Bluetooth Speaker",
+            price: 40000,
+            image: "/speaker.webp"
+        },
+        {
+            name: "Gaming Mouse",
+            price: 25000,
+            image: "/mouse.jpg"
+        },
+        {
+            name: "Keyboard",
+            price: 30000,
+            image: "/keyboard.jpg"
+        },
+        {
+            name: "Tablet",
+            price: 180000,
+            image: "/tablet.jpg"
+        },
+        {
+            name: "Camera",
+            price: 350000,
+            image: "/camera.webp"
+        },
+        {
+            name: "Power Bank",
+            price: 15000,
+            image: "/power-bank.jpg"
+        }   
     ];
 
     let html = "<h1>My Products</h1>";
 
     products.forEach(product => {
         html += `
-            <div style="margin-bottom:20px;">
-                <img src="${product.image}" width="150"/>
+            <div style="border:1px solid #ccc; padding:10px; margin:10px; width:200px;">
+            <img src="${product.image}" style="width:100%; height:150px; object-fit:cover;" />
                 <h3>${product.name}</h3>
                 <p>Price: ₦${product.price}</p>
             </div>
