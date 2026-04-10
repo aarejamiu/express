@@ -13,13 +13,20 @@ app.use(express.urlencoded({extended:true}))
 // })
 
 
-mongoose.connect(process.env.MONGODB_URI)
-.then(() =>
-    {console.log("Connected to MongoDB")
-})
-.catch((error) =>{
-    console.log("Error connecting to MongoDB:", error)
-});
+const dbUri = process.env.MONGODB_URI;
+if (!dbUri) {
+    console.error("MONGODB_URI is not defined. Check your .env file.");
+    process.exit(1);
+}
+
+mongoose.connect(dbUri)
+    .then(() => {
+        console.log("Connected to MongoDB");
+    })
+    .catch((error) => {
+        console.error("Error connecting to MongoDB:", error);
+        process.exit(1);
+    });
 
 const users = [
         { fullname: "John Doe", age: 30, email: "john.doe@example.com", course: "Software Engineering" },
@@ -70,21 +77,31 @@ app.get('/addDbUser', (req,res) => {
     res.render('addDbUser', { message })
 })
 
-app.post('/addDbUser', async(req,res) => {
+app.post('/addDbUser', async (req, res) => {
     const { fullname, email, password, age } = req.body;
 
     let message;
     try {
-        await UserModel.create(req.body)
-        res.send("User added successfully")
-        message = "User added successfully"
-        res.render('addDbUser', { message })
+        await UserModel.create(req.body);
+        message = "User added successfully";
+        res.render('addDbUser', { message });
+    } catch (error) {
+        console.error(error);
+        message = "Error adding user";
+        res.render('addDbUser', { message });
+    }
+});
+
+app.get("/dbUsers", async(req,res) => {
+    try {
+        const users = await UserModel.find();
+        res.render("dbUsers", { users });
     } catch (error) {
         console.log(error);
-        message = "Error adding user"
-        res.render('addDbUser', { message })
+        users=[]
+        res.render("dbUsers", { users });
     }
-})
+});
 
 
 
@@ -102,14 +119,9 @@ app.post('/addDbUser', async(req,res) => {
 
 
 
-
-
-
-
-
-
-app.listen(process.env.PORT, () => {
-    console.log(`Server is running on port ${process.env.PORT}`);
+const port = process.env.PORT || 3004;
+app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
 }).on('error', (error) => {
-    console.log(`Error occurred while starting the server: ${error}`);
+    console.error(`Error occurred while starting the server: ${error}`);
 });
