@@ -12,7 +12,15 @@ const saveDbUser = async (req, res) => {
     try {
         await UserModel.create(req.body);
         message = "User added successfully";
-        res.render('addDbUser', { message });
+        // res.render('addDbUser', { message });
+        res.status(201).send({
+            message,
+            data:{
+                fullname,
+                email,
+                age
+            }
+        })
     } catch (error) {
         console.log(error);
         message = "Error adding user"
