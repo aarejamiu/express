@@ -1,6 +1,8 @@
 const express = require("express");
-const { getDbUserPage, saveDbUser, getDbUser } = require("../controllers/user.controller");
+const { getDbUserPage } = require("../controllers/user.controller");
 const router = express.Router();
+
+
 
 router.get("/addDbUser", getDbUserPage)
 router.post("/addDbUser", saveDbUser)
