@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const UserModel = require('./models/user.model');
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({extended:true}))
+const userRoute = require("./routes/user.route");
 
 // let gender = "Male";
 // app.get("/users",(req,res)=>{
@@ -27,6 +28,8 @@ mongoose.connect(dbUri)
         console.error("Error connecting to MongoDB:", error);
         process.exit(1);
     });
+
+app.use("/", userRoute);
 
 const users = [
         { fullname: "John Doe", age: 30, email: "john.doe@example.com", course: "Software Engineering" },
@@ -72,36 +75,7 @@ app.post('/edituser/:id', (req,res) => {
     res.redirect('/users')
 })
 
-app.get('/addDbUser', (req,res) => {
-    let message = " "
-    res.render('addDbUser', { message })
-})
 
-app.post('/addDbUser', async (req, res) => {
-    const { fullname, email, password, age } = req.body;
-
-    let message;
-    try {
-        await UserModel.create(req.body);
-        message = "User added successfully";
-        res.render('addDbUser', { message });
-    } catch (error) {
-        console.error(error);
-        message = "Error adding user";
-        res.render('addDbUser', { message });
-    }
-});
-
-app.get("/dbUsers", async(req,res) => {
-    try {
-        const users = await UserModel.find();
-        res.render("dbUsers", { users });
-    } catch (error) {
-        console.log(error);
-        users=[]
-        res.render("dbUsers", { users });
-    }
-});
 
 
 
@@ -123,5 +97,5 @@ const port = process.env.PORT || 3004;
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 }).on('error', (error) => {
-    console.error(`Error occurred while starting the server: ${error}`);
+    console.log(`Error occurred while starting the server: ${error}`);
 });

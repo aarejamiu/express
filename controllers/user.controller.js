@@ -1,11 +1,11 @@
 const UserModel = require("../models/user.model");
 
-app.get('/addDbUser', (req,res) => {
+const getDbUserPage =(req,res) => {
     let message = " "
     res.render('addDbUser', { message })
-})
+}
 
-app.post('/addDbUser', async (req, res) => {
+const saveDbUser = async (req, res) => {
     const { fullname, email, password, age } = req.body;
 
     let message;
@@ -18,15 +18,21 @@ app.post('/addDbUser', async (req, res) => {
         message = "Error adding user"
         res.render('addDbUser', { message })
     }
-});
+};
 
-app.get("/dbUsers", async(req,res) => {
+const getDbUser = async (req, res) => {
     try {
-        const users = await UserModel.find();
+        const users = await UserModel.find().select("-password");
         res.render("dbUsers", { users });
     } catch (error) {
         console.log(error);
         users=[]
         res.render("dbUsers", { users });
     }
-});
+};
+
+module.exports = {
+    getDbUserPage,
+    saveDbUser,
+    getDbUser
+}
