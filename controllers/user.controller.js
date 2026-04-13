@@ -1,3 +1,4 @@
+const bcrypt = require("bcryptjs");
 const UserModel = require("../models/user.model");
 
 const getDbUserPage =(req,res) => {
@@ -10,7 +11,11 @@ const saveDbUser = async (req, res) => {
 
     let message;
     try {
-        await UserModel.create(req.body);
+        let salt = 20;
+        let saltRounds = await bcrypt.genSalt(salt);
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
+        
+        await UserModel.create({ fullname, email, password: hashedPassword, age });
         message = "User added successfully";
         // res.render('addDbUser', { message });
         res.status(201).send({
@@ -22,21 +27,24 @@ const saveDbUser = async (req, res) => {
             }
         })
     } catch (error) {
+        if (error.code === 11000) {
+            message = "Email already exists";
+        } else {
         console.log(error);
         message = "Error adding user"
         res.render('addDbUser', { message })
+        }
     }
 };
 
 const getDbUser = async (req, res) => {
+    let users = [];
     try {
-        const users = await UserModel.find().select("-password");
-        res.render("dbUsers", { users });
+        users = await UserModel.find().select("-password");
     } catch (error) {
         console.log(error);
-        users=[]
-        res.render("dbUsers", { users });
     }
+    res.render("dbUsers", { users });
 };
 
 const deleteDbUser = async (req, res) => {
@@ -78,3 +86,4 @@ module.exports = {
     deleteDbUser,
     updateDbUser
 }
+

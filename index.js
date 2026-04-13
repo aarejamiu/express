@@ -1,4 +1,6 @@
+require("node:dns/promises").setServers(["1.1.1.1", "8.8.8.8"]);
 const express = require('express');
+const bcrypt = require('bcryptjs');
 const app = express();
 const dotenv = require('dotenv');
 dotenv.config();
@@ -99,3 +101,7 @@ app.listen(port, () => {
 }).on('error', (error) => {
     console.log(`Error occurred while starting the server: ${error}`);
 });
+
+
+// encription and decryption
+// password hashing: BcriptJs is used to hash password before saving to the database and compare hashed password during login.

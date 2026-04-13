@@ -7,7 +7,7 @@ const router = express.Router();
 router.get("/addDbUser", getDbUserPage)
 router.post("/addDbUser", saveDbUser)
 router.get("/dbUsers", getDbUser)
-router.delete("/dbUser", deleteDbUser)
-router.put("/dbUser", updateDbUser)
+router.delete("/dbUser/:id", deleteDbUser)
+router.put("/dbUser/:id", updateDbUser)
 
 module.exports = router;

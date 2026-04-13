@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Database Users</title>
 </head>
 <body>
-    <% users.forEach(_, idx => { %>
-    <h1><%= idx+1 %><%= _.fullname %></h1>
+    <% users.forEach((user, idx) => { %>
+    <h1><%= idx + 1 %> <%= user.fullname %></h1>
     <% }) %>
 </body>
 </html>
