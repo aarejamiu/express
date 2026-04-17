@@ -1,6 +1,7 @@
 const bcrypt = require("bcryptjs");
 const UserModel = require("../models/user.model");
 const jwt = require("jsonwebtoken");
+const { request } = require("express");
 
 const getDbUserPage =(req,res) => {
     let message = " "
@@ -118,6 +119,25 @@ const updateDbUser = async (req, res) => {
     }
 };
 
+const verifyUser = async (req, res,next)=> {
+    const token = req.headers.authorization?.split(" ")[1]?req.header.authorization.split(" ")[1]:req.header.authorization.split(" ")[0];
+    try {
+        await jwt.verify(token, process.env.JWT_SECRET, function(err, decoded)) {
+            if (err) {
+                console.log(err);
+                res.status(401).send({ message: "Unauthorized" });
+                return;
+            }
+
+            console.log(decoded);
+            next();
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({ message: "Error verifying user" });
+    }
+}
+
 module.exports = {
     getDbUserPage,
     getLoginPage,
@@ -125,6 +145,7 @@ module.exports = {
     getDbUser,
     deleteDbUser,
     updateDbUser,
-    loginDbUser
+    loginDbUser,
+    verifyUser
 }
 
