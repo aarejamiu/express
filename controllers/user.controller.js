@@ -1,5 +1,6 @@
 const bcrypt = require("bcryptjs");
 const UserModel = require("../models/user.model");
+const jwt = require("jsonwebtoken");
 
 const getDbUserPage =(req,res) => {
     let message = " "
@@ -20,11 +21,13 @@ const saveDbUser = async (req, res) => {
         let saltRounds = await bcrypt.genSalt(salt);
         const hashedPassword = await bcrypt.hash(password, saltRounds);
         
-        await UserModel.create({ fullname, email, password: hashedPassword, age });
+        let user = await UserModel.create({ fullname, email, password: hashedPassword, age });
         message = "User added successfully";
         // res.render('addDbUser', { message });
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
         res.status(201).send({
             message,
+            token,
             data:{
                 fullname,
                 email,
