@@ -1,12 +1,13 @@
 require("node:dns/promises").setServers(["1.1.1.1", "8.8.8.8"]);
 const express = require('express');
-const bcrypt = require('bcryptjs');
+// const bcrypt = require('bcryptjs');
 const app = express();
 const dotenv = require('dotenv');
 dotenv.config();
 const mongoose = require('mongoose');
 const UserModel = require('./models/user.model');
 app.set('view engine', 'ejs');
+app.use(express.json());
 app.use(express.urlencoded({extended:true}))
 const userRoute = require("./routes/user.route");
 
@@ -14,7 +15,6 @@ const userRoute = require("./routes/user.route");
 // app.get("/users",(req,res)=>{
 //     res.render("allUsers", { gender });
 // })
-
 
 const dbUri = process.env.MONGODB_URI;
 if (!dbUri) {

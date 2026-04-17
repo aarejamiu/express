@@ -6,6 +6,11 @@ const getDbUserPage =(req,res) => {
     res.render('addDbUser', { message })
 }
 
+const getLoginPage = (req, res) => {
+    let message = "";
+    res.render('login', { message });
+};
+
 const saveDbUser = async (req, res) => {
     const { fullname, email, password, age } = req.body;
 
@@ -29,11 +34,42 @@ const saveDbUser = async (req, res) => {
     } catch (error) {
         if (error.code === 11000) {
             message = "Email already exists";
-        } else {
-        console.log(error);
-        message = "Error adding user"
-        res.render('addDbUser', { message })
+            return res.status(409).send({ message });
         }
+
+        console.log(error);
+        message = "Error adding user";
+        res.status(500).send({ message });
+    }
+};
+
+const loginDbUser = async (req, res) => {
+    const { email, password } = req.body;
+    
+    try {
+        const user = await UserModel.findOne({ email });
+        if (!user) {
+            return res.status(404).send({ message: "User not found" });
+        }
+
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(401).send({ message: "Invalid Email or Password" });
+        }
+
+        res.status(200).send({ 
+            message: "Login successful",
+            user,
+            data: {
+                fullname: user.fullname,
+                email: user.email,
+                course: user.course,
+                age: user.age
+            }
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({ message: "Error logging in" });
     }
 };
 
@@ -81,9 +117,11 @@ const updateDbUser = async (req, res) => {
 
 module.exports = {
     getDbUserPage,
+    getLoginPage,
     saveDbUser,
     getDbUser,
     deleteDbUser,
-    updateDbUser
+    updateDbUser,
+    loginDbUser
 }
 
